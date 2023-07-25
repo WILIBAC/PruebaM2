@@ -33,3 +33,4 @@ BEGIN
 	END CATCH
 end
 GO
+exec dbo.Sp_ListNomenclatures

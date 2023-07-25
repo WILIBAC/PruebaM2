@@ -27,6 +27,7 @@ namespace Prueba
                 Console.WriteLine("5. Para consultar tipo de negocio");
                 Console.WriteLine("6. Para consultar regiones");
                 Console.WriteLine("7. Para consultar ciudades");
+                Console.WriteLine("8. Para id de inmueble por transacion");
                 Console.WriteLine("0. Para salir");
                 opc = Console.ReadLine();
                 if (opc == "1")
@@ -64,6 +65,12 @@ namespace Prueba
                     Console.ForegroundColor = ConsoleColor.Blue;
                     RequestCitys().Wait();
                 }
+                else if (opc == "8")
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Requestid().Wait();
+                }
+
 
                 Console.WriteLine("Presiona enter para continuar...");
                 Console.ReadKey();
@@ -72,7 +79,7 @@ namespace Prueba
             
         }
 
-        static async Task<string> TokenRequest(HttpClient client)
+        public static async Task<string> TokenRequest(HttpClient client)
         {
             string url = "https://ptec-core-dev-third-party-apis.metrocuadrado.com/v1/api/core/oauth2/tokens";
 
@@ -93,6 +100,7 @@ namespace Prueba
 
                 // Obtener el valor de access_token
                 string accessToken = objetoJson["data"]["access_token"].ToString();
+                Console.WriteLine($"AccessToken: {accessToken}");
                 return accessToken;
             }
             else
@@ -182,7 +190,8 @@ namespace Prueba
         static async Task TypeProperties()
         {
             var client = new HttpClient();
-            var request = new HttpRequestMessage
+      
+        var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
                 RequestUri = new Uri("https://ptec-core-dev.metrocuadrado.com/rest-catalogue/realestatetypes/"),
@@ -253,6 +262,30 @@ namespace Prueba
                 RequestUri = new Uri("https://ptec-core-dev.metrocuadrado.com/rest-catalogue/cities/?regionId=14"),
                 Headers =
                 {
+                    { "x-api-key", apikey },
+                    { "Accept", "application/json, application/xml" },
+                },
+            };
+            using (var response = await client.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+                var body = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(body);
+            }
+        }
+        static async Task Requestid()
+        {
+            Console.WriteLine("Ingresa el id");
+            var id= Console.ReadLine();         
+            var client = new HttpClient();
+            string token = await TokenRequest(client);
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri("https://www.metrocuadrado.com/rest-api/transactions/"+id),
+                Headers =
+                {
+                    { "token", token },
                     { "x-api-key", apikey },
                     { "Accept", "application/json, application/xml" },
                 },

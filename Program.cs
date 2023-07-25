@@ -282,7 +282,7 @@ namespace Prueba
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
-                RequestUri = new Uri("https://www.metrocuadrado.com/rest-api/transactions/"+id),
+                RequestUri = new Uri("https://ptec-core-dev.metrocuadrado.com/rest-api/transactions/" + id),
                 Headers =
                 {
                     { "token", token },
